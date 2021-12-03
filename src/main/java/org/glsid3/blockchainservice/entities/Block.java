@@ -25,7 +25,7 @@ public class Block {
     private String lastHash;
     private int nonce;
     @OneToMany
-    private Collection<Transaction> transactions;
+    private List<Transaction> transactions;
     @ManyToOne
     private BlockChain blockchain;
 }

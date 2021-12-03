@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 
 @Data
@@ -19,5 +20,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class BlockRequestDto {
 
-    private int nonce;
+    private List<Transaction> transactions;
+    private BlockChain blockchain;
 }

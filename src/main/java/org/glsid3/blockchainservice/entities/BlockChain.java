@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,5 +21,5 @@ public class BlockChain {
     private int difficulte;
     private double recompense;
     @OneToMany
-    Collection<Block> blocks;
+    private List<Block> blocks;
 }
