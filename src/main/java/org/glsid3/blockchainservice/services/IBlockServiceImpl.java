@@ -6,7 +6,6 @@ import org.glsid3.blockchainservice.dto.BlockResponseDto;
 import org.glsid3.blockchainservice.entities.Block;
 import org.glsid3.blockchainservice.mappers.IBlockMapper;
 import org.glsid3.blockchainservice.repositories.IBlockRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -31,30 +30,29 @@ public class IBlockServiceImpl implements IBlockService {
         Block block=blockMapper.blockRequestDtoToBlock(blockRequestDto);
         block.setCreationDate(new Date());
         block.setId(UUID.randomUUID().toString());
-        block.setLastHash(block.getBlockchain().getBlocks().get(block.getBlockchain().getBlocks().size()-1).getHash());
-        blockService.minerBlock(block);
         blockRepository.save(block);
         return blockMapper.blockToBlockResponseDto(block);
     }
 
     @Override
     public String calculHash(Block block) {
-        String hash=block.getLastHash()+ block.getNonce()+ block.getTransactions().hashCode();
 
-        return Hashing.sha256()
-                .hashString(hash, StandardCharsets.UTF_8)
+        String toHash=block.getLastHash()+block.getNonce()+block.getCreationDate()+block.getTransactions().hashCode();
+        return  Hashing.sha256()
+                .hashString(toHash, StandardCharsets.UTF_8)
                 .toString();
+
     }
 
     @Override
-    public void minerBlock(Block block) {
+    public void minerBlock(int difficulty,Block block) {
         String zeros="";
-        for(int i=0;i<block.getBlockchain().getDifficulte();i++)
+        for(int i=0;i<difficulty;i++)
             zeros.concat("0");
         while(true){
             String hash=calculHash(block);
             block.setNonce(block.getNonce()+1);
-            if(hash.substring(block.getBlockchain().getDifficulte()).equals(zeros))            {
+            if(hash.substring(difficulty).equals(zeros)){
                 block.setHash(hash);
                 return ;
             }

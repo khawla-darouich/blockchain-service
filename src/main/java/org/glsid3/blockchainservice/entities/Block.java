@@ -26,6 +26,4 @@ public class Block {
     private int nonce;
     @OneToMany
     private List<Transaction> transactions;
-    @ManyToOne
-    private BlockChain blockchain;
 }

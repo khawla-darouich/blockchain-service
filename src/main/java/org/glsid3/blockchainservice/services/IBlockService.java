@@ -7,5 +7,5 @@ import org.glsid3.blockchainservice.entities.Block;
 public interface IBlockService {
     BlockResponseDto createBlock(BlockRequestDto blockRequestDto);
     String calculHash(Block block);
-    void minerBlock(Block block);
+    void minerBlock(int difficulty, Block block);
 }

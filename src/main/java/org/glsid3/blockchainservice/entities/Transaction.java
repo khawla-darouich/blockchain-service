@@ -19,6 +19,4 @@ public class Transaction {
     private String sourceAddress;
     private String destinationAddress;
     private double montant;
-    @ManyToOne
-    private Block block;
 }
