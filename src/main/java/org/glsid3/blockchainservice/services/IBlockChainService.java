@@ -12,4 +12,5 @@ public interface IBlockChainService {
     void miner(String BlockChainId,Block block,String mineur);
     Block getLastBlock(String BlockChainId);
     boolean isValid(String blockChainId);
+    double solde(String address);
 }

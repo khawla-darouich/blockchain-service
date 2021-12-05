@@ -76,4 +76,13 @@ public class IBlockChainServiceImpl implements IBlockChainService {
 
         return true;
     }
+
+    @Override
+    public double solde(String address) {
+        List<Transaction> transactions=transactionRepository.findByDestinationAddress(address);
+        double solde=0;
+        for (Transaction transaction:transactions)
+            solde+=transaction.getMontant();
+        return solde;
+    }
 }
