@@ -15,13 +15,10 @@ import java.util.UUID;
 @Service
 public class IBlockServiceImpl implements IBlockService {
     private IBlockMapper blockMapper;
-   // @Autowired
-    private IBlockService blockService;
     private IBlockRepository blockRepository;
 
     public IBlockServiceImpl(IBlockMapper blockMapper, IBlockRepository blockRepository) {
         this.blockMapper = blockMapper;
-       // this.blockService = blockService;
         this.blockRepository = blockRepository;
     }
 
@@ -46,13 +43,15 @@ public class IBlockServiceImpl implements IBlockService {
 
     @Override
     public void minerBlock(int difficulty,Block block) {
-        String zeros="";
-        for(int i=0;i<difficulty;i++)
-            zeros.concat("0");
+        String zeros=new String(new char[difficulty]).replace('\0','0');
+
+        System.out.println("before"+zeros);
         while(true){
             String hash=calculHash(block);
+          // System.out.println(hash.substring(0,difficulty));
             block.setNonce(block.getNonce()+1);
-            if(hash.substring(difficulty).equals(zeros)){
+            if(hash.substring(0,difficulty).equals(zeros)){
+                System.out.println("if statement");
                 block.setHash(hash);
                 return ;
             }

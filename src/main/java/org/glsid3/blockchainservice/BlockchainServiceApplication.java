@@ -8,6 +8,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.ArrayList;
+
 @SpringBootApplication
 public class BlockchainServiceApplication {
 
@@ -19,7 +21,9 @@ public class BlockchainServiceApplication {
     CommandLineRunner start(IBlockChainService blockService)
     {
         return args -> {
-            blockService.ajouter(new BlockChainRequestDto("blockC1",2,200.0));
+            System.out.println("heeey : ");
+            blockService.ajouter(new BlockChainRequestDto("blockC1",1 ,200.0,new ArrayList<>()));
+            System.out.println("heeey : ");
         };
     }
 }

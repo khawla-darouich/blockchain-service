@@ -12,6 +12,7 @@ import org.glsid3.blockchainservice.repositories.IBlockRepository;
 import org.glsid3.blockchainservice.repositories.ITransactionRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -36,11 +37,18 @@ public class IBlockChainServiceImpl implements IBlockChainService {
     public BlockChainResponseDto ajouter(BlockChainRequestDto blockChainRequestDto) {
         BlockChain blockChain=blockChainMapper.blockChainRequestDtoToBlockChain(blockChainRequestDto);
         blockChain.setId(UUID.randomUUID().toString());
-        Block genesisBlock= new Block(UUID.randomUUID().toString(),new Date(),null,new String(new char[blockChain.getDifficulte()]).replace('\0','0'),0,null);
+        System.out.println("BlockChain creeted successfuly : "+blockChain);
+        Block genesisBlock= new Block(UUID.randomUUID().toString(),new Date(),null,new String(new char[blockChain.getDifficulte()]).replace('\0','0'),0,new ArrayList<>());
+        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockService.minerBlock(blockChain.getDifficulte(),genesisBlock);
+        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockRepository.save(genesisBlock);
+        System.out.println("BlockChain creeted successfuly : "+blockChain);
+        blockChain.setBlocks(new ArrayList<>());
         blockChain.getBlocks().add(genesisBlock);
+        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockChainRepository.save(blockChain);
+        System.out.println("BlockChain creeted successfuly : "+blockChain);
         return blockChainMapper.blockChainToBlockChainResponseDto(blockChain);
     }
 
