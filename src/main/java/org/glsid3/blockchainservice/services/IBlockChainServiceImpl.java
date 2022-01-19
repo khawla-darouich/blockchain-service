@@ -51,7 +51,6 @@ public class IBlockChainServiceImpl implements IBlockChainService {
     @Override
     public void miner(String BlockChainId, BlockRequestDto blockRequestDto) throws BlockChainInvalidException {
         BlockChain blockChain=blockChainRepository.findById(BlockChainId).get();
-        System.out.println("1111111111111111111111111111111111111111111111");
         System.out.println(blockChain);
         if(!isValid(blockChain)) throw new BlockChainInvalidException("Impossible de miner les transactions : BlockChain Invalid");
         Block block=blockService.createBlock(blockRequestDto.getTransactions());
