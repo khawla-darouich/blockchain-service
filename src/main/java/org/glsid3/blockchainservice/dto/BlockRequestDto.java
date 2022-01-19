@@ -20,6 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 public class BlockRequestDto {
 
+    private String mineurAdress;
     private List<Transaction> transactions;
-    private BlockChain blockchain;
 }

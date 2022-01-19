@@ -1,21 +1,46 @@
 package org.glsid3.blockchainservice.web;
 
+import org.glsid3.blockchainservice.dto.BlockChainRequestDto;
+import org.glsid3.blockchainservice.dto.BlockChainResponseDto;
 import org.glsid3.blockchainservice.dto.BlockRequestDto;
-import org.glsid3.blockchainservice.dto.BlockResponseDto;
+import org.glsid3.blockchainservice.entities.Block;
+import org.glsid3.blockchainservice.entities.BlockChain;
+import org.glsid3.blockchainservice.repositories.IBlockChainRepository;
+import org.glsid3.blockchainservice.services.IBlockChainService;
 import org.glsid3.blockchainservice.services.IBlockService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.glsid3.blockchainservice.xceptions.BlockChainInvalidException;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class ReastController {
+    private IBlockChainRepository blockChainRepository;
     private IBlockService blockService;
-
-    public ReastController(IBlockService blockService) {
+    private IBlockChainService blockChainService;
+    public ReastController(IBlockChainRepository blockChainRepository, IBlockService blockService, IBlockChainService blockChainService) {
+        this.blockChainRepository = blockChainRepository;
         this.blockService = blockService;
+        this.blockChainService = blockChainService;
     }
     @PostMapping("blocks")
-    public BlockResponseDto create(@RequestBody BlockRequestDto blockRequestDto){
-        return blockService.createBlock(blockRequestDto);
+    public Block create(@RequestBody BlockRequestDto blockRequestDto){
+        return blockService.createBlock(blockRequestDto.getTransactions());
     }
+
+    @GetMapping("blockains")
+    public List<BlockChain> get(){
+        return blockChainRepository.findAll();
+    }
+
+    @PostMapping("blockains")
+    public BlockChainResponseDto add(@RequestBody BlockChainRequestDto blockChainRequestDto){
+         return blockChainService.ajouter(blockChainRequestDto);
+    }
+
+    @PutMapping("blockchains/miner/{id}")
+    public void miner(@RequestBody BlockRequestDto blockRequestDto, @PathVariable String id ) throws BlockChainInvalidException {
+        blockChainService.miner(id,blockRequestDto);
+    }
+
 }

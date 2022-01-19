@@ -4,12 +4,14 @@ import com.google.common.hash.Hashing;
 import org.glsid3.blockchainservice.dto.BlockRequestDto;
 import org.glsid3.blockchainservice.dto.BlockResponseDto;
 import org.glsid3.blockchainservice.entities.Block;
+import org.glsid3.blockchainservice.entities.Transaction;
 import org.glsid3.blockchainservice.mappers.IBlockMapper;
 import org.glsid3.blockchainservice.repositories.IBlockRepository;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,18 +25,21 @@ public class IBlockServiceImpl implements IBlockService {
     }
 
     @Override
-    public BlockResponseDto createBlock(BlockRequestDto blockRequestDto) {
-        Block block=blockMapper.blockRequestDtoToBlock(blockRequestDto);
+    public Block createBlock(List<Transaction> transactions) {
+        Block block=new Block();
+        block.setTransactions(transactions);
         block.setCreationDate(new Date());
+        block.setNonce(0);
         block.setId(UUID.randomUUID().toString());
         blockRepository.save(block);
-        return blockMapper.blockToBlockResponseDto(block);
+        return block;
+
     }
 
     @Override
     public String calculHash(Block block) {
 
-        String toHash=block.getLastHash()+block.getNonce()+block.getCreationDate()+block.getTransactions().hashCode();
+        String toHash=block.getLastHash()+block.getNonce()+block.getTransactions().hashCode();
         return  Hashing.sha256()
                 .hashString(toHash, StandardCharsets.UTF_8)
                 .toString();
@@ -44,14 +49,10 @@ public class IBlockServiceImpl implements IBlockService {
     @Override
     public void minerBlock(int difficulty,Block block) {
         String zeros=new String(new char[difficulty]).replace('\0','0');
-
-        System.out.println("before"+zeros);
         while(true){
             String hash=calculHash(block);
-          // System.out.println(hash.substring(0,difficulty));
             block.setNonce(block.getNonce()+1);
             if(hash.substring(0,difficulty).equals(zeros)){
-                System.out.println("if statement");
                 block.setHash(hash);
                 return ;
             }

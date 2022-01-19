@@ -1,8 +1,11 @@
 package org.glsid3.blockchainservice.services;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 import org.glsid3.blockchainservice.dto.BlockChainRequestDto;
 import org.glsid3.blockchainservice.dto.BlockChainResponseDto;
-import org.glsid3.blockchainservice.dto.BlockResponseDto;
+import org.glsid3.blockchainservice.dto.BlockRequestDto;
 import org.glsid3.blockchainservice.entities.Block;
 import org.glsid3.blockchainservice.entities.BlockChain;
 import org.glsid3.blockchainservice.entities.Transaction;
@@ -10,14 +13,19 @@ import org.glsid3.blockchainservice.mappers.IBlockChainMapper;
 import org.glsid3.blockchainservice.repositories.IBlockChainRepository;
 import org.glsid3.blockchainservice.repositories.IBlockRepository;
 import org.glsid3.blockchainservice.repositories.ITransactionRepository;
+import org.glsid3.blockchainservice.xceptions.BlockChainInvalidException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
+@Transactional
+@Data
 public class IBlockChainServiceImpl implements IBlockChainService {
 
     private IBlockChainRepository blockChainRepository;
@@ -25,41 +33,39 @@ public class IBlockChainServiceImpl implements IBlockChainService {
     private IBlockService blockService;
     private IBlockRepository blockRepository;
     private ITransactionRepository transactionRepository;
-    public IBlockChainServiceImpl(IBlockChainRepository blockChainRepository, IBlockChainMapper blockChainMapper, IBlockService blockService, IBlockRepository blockRepository, ITransactionRepository transactionRepository) {
-        this.blockChainRepository = blockChainRepository;
-        this.blockChainMapper = blockChainMapper;
-        this.blockService = blockService;
-        this.blockRepository = blockRepository;
-        this.transactionRepository = transactionRepository;
-    }
+    private List<Transaction> pendingTransactions;
 
     @Override
     public BlockChainResponseDto ajouter(BlockChainRequestDto blockChainRequestDto) {
         BlockChain blockChain=blockChainMapper.blockChainRequestDtoToBlockChain(blockChainRequestDto);
         blockChain.setId(UUID.randomUUID().toString());
-        System.out.println("BlockChain creeted successfuly : "+blockChain);
         Block genesisBlock= new Block(UUID.randomUUID().toString(),new Date(),null,new String(new char[blockChain.getDifficulte()]).replace('\0','0'),0,new ArrayList<>());
-        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockService.minerBlock(blockChain.getDifficulte(),genesisBlock);
-        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockRepository.save(genesisBlock);
-        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockChain.setBlocks(new ArrayList<>());
         blockChain.getBlocks().add(genesisBlock);
-        System.out.println("BlockChain creeted successfuly : "+blockChain);
         blockChainRepository.save(blockChain);
-        System.out.println("BlockChain creeted successfuly : "+blockChain);
         return blockChainMapper.blockChainToBlockChainResponseDto(blockChain);
     }
 
     @Override
-    public void miner(String BlockChainId,Block block, String mineur) {
+    public void miner(String BlockChainId, BlockRequestDto blockRequestDto) throws BlockChainInvalidException {
         BlockChain blockChain=blockChainRepository.findById(BlockChainId).get();
+        System.out.println("1111111111111111111111111111111111111111111111");
+        System.out.println(blockChain);
+        if(!isValid(blockChain)) throw new BlockChainInvalidException("Impossible de miner les transactions : BlockChain Invalid");
+        Block block=blockService.createBlock(blockRequestDto.getTransactions());
         block.setLastHash(getLastBlock(BlockChainId).getHash());
+        blockService.minerBlock(blockChain.getDifficulte(),block);
+        blockRepository.save(block);
+        blockChain.getBlocks().add(block);
+        blockChainRepository.save(blockChain);
         String transactionId=UUID.randomUUID().toString();
-        Transaction transaction=new Transaction(transactionId,new Date(),null,mineur,blockChain.getRecompense());
-        transactionRepository.save(transaction);
-        block.getTransactions().add(transaction);
+       // Transaction transaction=new Transaction(transactionId,new Date(),blockChain.getNom(),mineur,blockChain.getRecompense());
+        //transaction.setId(UUID.randomUUID().toString());
+        //transactionRepository.save(transaction);
+        //pendingTransactions=new ArrayList<>();
+        //pendingTransactions.add(transaction);
     }
 
     @Override
@@ -69,17 +75,21 @@ public class IBlockChainServiceImpl implements IBlockChainService {
     }
 
     @Override
-    public boolean isValid(String blockChainId) {
-        BlockChain blockChain=blockChainRepository.findById(blockChainId).get();
+    public boolean isValid(BlockChain blockChain) {
         Block currentBlock;
         Block lastBlock;
         for(int i=1; i<blockChain.getBlocks().size();i++){
+            System.out.println(blockChain.getBlocks().get(i));
             currentBlock=blockChain.getBlocks().get(i);
             lastBlock=blockChain.getBlocks().get(i-1);
-            if(!currentBlock.getLastHash().equals(lastBlock.getHash()))
+            if(!currentBlock.getLastHash().equals(lastBlock.getHash())) {
+                System.out.println("lastHash******************************************");
                 return false;
-            if(!currentBlock.getHash().equals(blockService.calculHash(currentBlock)))
+            }
+            if(!currentBlock.getHash().equals(blockService.calculHash(currentBlock))) {
+                System.out.println("hash******************************************");
                 return false;
+            }
         }
 
         return true;
