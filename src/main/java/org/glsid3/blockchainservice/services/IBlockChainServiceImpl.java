@@ -2,7 +2,6 @@ package org.glsid3.blockchainservice.services;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import org.glsid3.blockchainservice.dto.BlockChainRequestDto;
 import org.glsid3.blockchainservice.dto.BlockChainResponseDto;
 import org.glsid3.blockchainservice.dto.BlockRequestDto;
@@ -13,7 +12,7 @@ import org.glsid3.blockchainservice.mappers.IBlockChainMapper;
 import org.glsid3.blockchainservice.repositories.IBlockChainRepository;
 import org.glsid3.blockchainservice.repositories.IBlockRepository;
 import org.glsid3.blockchainservice.repositories.ITransactionRepository;
-import org.glsid3.blockchainservice.xceptions.BlockChainInvalidException;
+import org.glsid3.blockchainservice.Exceptions.BlockChainInvalidException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

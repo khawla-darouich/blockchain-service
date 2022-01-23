@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.ArrayList;
 
 @SpringBootApplication
-public class BlockchainServiceApplication implements CommandLineRunner {
+public class BlockchainServiceApplication  {
 
     @Autowired
     BlockChainApplicationService blockChainApplicationService;
@@ -21,10 +21,5 @@ public class BlockchainServiceApplication implements CommandLineRunner {
         SpringApplication.run(BlockchainServiceApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception{
-        blockChainApplicationService.createBlockChain();
-        blockChainApplicationService.createTransactions();
-        blockChainApplicationService.minerBlock();
-    }
+
 }

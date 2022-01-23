@@ -8,17 +8,17 @@ import org.glsid3.blockchainservice.entities.BlockChain;
 import org.glsid3.blockchainservice.repositories.IBlockChainRepository;
 import org.glsid3.blockchainservice.services.IBlockChainService;
 import org.glsid3.blockchainservice.services.IBlockService;
-import org.glsid3.blockchainservice.xceptions.BlockChainInvalidException;
+import org.glsid3.blockchainservice.Exceptions.BlockChainInvalidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-public class ReastController {
+public class BlockController {
     private IBlockChainRepository blockChainRepository;
     private IBlockService blockService;
     private IBlockChainService blockChainService;
-    public ReastController(IBlockChainRepository blockChainRepository, IBlockService blockService, IBlockChainService blockChainService) {
+    public BlockController(IBlockChainRepository blockChainRepository, IBlockService blockService, IBlockChainService blockChainService) {
         this.blockChainRepository = blockChainRepository;
         this.blockService = blockService;
         this.blockChainService = blockChainService;
@@ -28,12 +28,12 @@ public class ReastController {
         return blockService.createBlock(blockRequestDto.getTransactions());
     }
 
-    @GetMapping("blockains")
+    @GetMapping("blockchains")
     public List<BlockChain> get(){
         return blockChainRepository.findAll();
     }
 
-    @PostMapping("blockains")
+    @PostMapping("blockchains")
     public BlockChainResponseDto add(@RequestBody BlockChainRequestDto blockChainRequestDto){
          return blockChainService.ajouter(blockChainRequestDto);
     }

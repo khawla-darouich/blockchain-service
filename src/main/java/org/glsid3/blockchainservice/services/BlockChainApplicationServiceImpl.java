@@ -5,7 +5,6 @@ import org.glsid3.blockchainservice.dto.BlockChainRequestDto;
 import org.glsid3.blockchainservice.entities.Transaction;
 import org.glsid3.blockchainservice.repositories.IBlockChainRepository;
 import org.glsid3.blockchainservice.repositories.TransactionRepository;
-import org.glsid3.blockchainservice.xceptions.BlockChainInvalidException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
